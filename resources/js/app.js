@@ -2,13 +2,14 @@ require("./bootstrap");
 
 import VueRouter from "vue-router";
 import router from "./router";
-import { ValidationProvider, ValidationObserver, extend } from "vee-validate";
+import { ValidationProvider } from "vee-validate/dist/vee-validate.full.esm";
+import { ValidationObserver } from "vee-validate";
+import VModal from "vue-js-modal";
 
 window.Vue = require("vue");
 
 Vue.use(VueRouter);
-
-Vue.use(VeeValidate);
+Vue.use(VModal);
 
 Vue.component("ValidationProvider", ValidationProvider);
 Vue.component("ValidationObserver", ValidationObserver);

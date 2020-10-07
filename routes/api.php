@@ -15,5 +15,8 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::group([], function () {
-    Route::get('/tasks', 'API\TaskController@index');
+    Route::get('/tasks', 'API\Task\TaskController@index');
+    Route::post('/task_list/store', 'API\Task\TaskListController@store');
+    Route::patch('task_list/{task_list}/update', 'API\Task\TaskListController@update');
+    Route::delete('task_list/{task_list}/destroy', 'API\Task\TaskListController@destroy');
 });

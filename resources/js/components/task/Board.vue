@@ -68,7 +68,7 @@
                                                 v-on:tasklist-added="
                                                     taskListAdded
                                                 "
-                                                v-on:cancel-tasklist="
+                                                v-on:tasklist-cancelled="
                                                     cancelSelectTaskToAddList
                                                 "
                                             />

@@ -54,7 +54,7 @@
                 <div class="p-3 flex justify-between items-end bg-gray-100">
                     <button
                         v-if="selected == task.t_id"
-                        @click="$emit('cancel-tasklist')"
+                        @click.prevent="$emit('tasklist-cancelled')"
                         class="px-2 py-2 text-white text-xs bg-red-500 rounded-md shadow hover:bg-red-600 transition duration-300 ease-in-out"
                     >
                         <i class="fas fa-times" /> Cancel

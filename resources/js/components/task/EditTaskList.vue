@@ -8,7 +8,7 @@
             :scrollable="true"
             :height="370"
         >
-            <div class="flex p-3 bg-purple-500">
+            <div class="flex p-3 bg-orange-300">
                 <h2 class="text-md text-white font-bold">
                     Edit Task List
                 </h2>
@@ -72,7 +72,7 @@
 
                         <div class="w-full p-3 bg-gray-100">
                             <button
-                                @click="closeEditTaskListModal"
+                                @click.prevent="closeModal"
                                 class="px-2 py-2 mr-2 text-white text-xs bg-red-500 rounded-md shadow hover:bg-red-600 transition duration-300 ease-in-out"
                             >
                                 <i class="fas fa-times" /> Cancel
@@ -80,7 +80,7 @@
 
                             <button
                                 type="submit"
-                                class="px-3 py-2 text-white text-xs bg-orange-400 rounded shadow hover:bg-orange-600 transition duration-300 ease-in-out"
+                                class="px-3 py-2 text-white text-xs bg-orange-300 rounded shadow hover:bg-orange-500 transition duration-300 ease-in-out"
                             >
                                 <i class="fas fa-edit" /> Update
                             </button>
@@ -118,13 +118,14 @@ export default {
                 })
                 .then(response => {
                     this.$emit("tasklist-updated", response.data.task_list);
-                    this.closeEditTaskListModal();
+
+                    this.closeModal();
                 })
                 .catch(error => {
                     console.log(error);
                 });
         },
-        closeEditTaskListModal() {
+        closeModal() {
             this.$modal.hide("edit-tasklist-modal");
         }
     },

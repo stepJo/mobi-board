@@ -1,7 +1,7 @@
 <template>
     <div>
         <ul class="nav">
-            <li class="nav-item">
+            <li :class="{ active: $route.path == '/' }" class="nav-item">
                 <router-link to="/">
                     <i class="fas fa-home"></i>
 
@@ -11,7 +11,7 @@
                 </router-link>
             </li>
 
-            <li class="nav-item">
+            <li :class="{ active: $route.path == '/task' }" class="nav-item">
                 <router-link to="/task">
                     <i class="fas fa-tasks"></i>
 

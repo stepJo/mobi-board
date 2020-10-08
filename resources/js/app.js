@@ -1,17 +1,20 @@
 require("./bootstrap");
 
+import Vue from "vue";
 import VueRouter from "vue-router";
 import router from "./router";
 import { ValidationProvider } from "vee-validate/dist/vee-validate.full.esm";
 import { ValidationObserver } from "vee-validate";
-import VModal from "vue-js-modal";
+import loader from "vue-ui-preloader";
 import Toasted from "vue-toasted";
-import Vue from "vue";
+import VModal from "vue-js-modal";
 
 window.Vue = require("vue");
 
 Vue.use(VueRouter);
-Vue.use(VModal);
+
+Vue.use(loader);
+
 Vue.use(Toasted, {
     iconPack: "fontawesome"
 });
@@ -40,6 +43,8 @@ Vue.toasted.register(
         }
     }
 );
+
+Vue.use(VModal);
 
 Vue.component("ValidationProvider", ValidationProvider);
 Vue.component("ValidationObserver", ValidationObserver);

@@ -1,2 +1,3 @@
-# Project and Task Management System 
-<p>Build with Laravel and VueJS</p>
+## Project and Task Management System 
+
+Laravel 7 + VueJS + TailwindCSS...

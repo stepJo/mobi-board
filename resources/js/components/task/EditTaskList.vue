@@ -1,5 +1,12 @@
 <template>
     <div class="row">
+        <loading
+            :active.sync="loading"
+            color="yellow"
+            opacity="0.7"
+            blur="3px"
+        />
+
         <modal
             name="edit-tasklist-modal"
             :draggable="false"
@@ -105,11 +112,14 @@ export default {
             error: {
                 tl_title: "",
                 tl_description: ""
-            }
+            },
+            loading: false
         };
     },
     methods: {
         updateTaskList() {
+            this.loading = true;
+
             axios
                 .patch(`/api/task_list/${this.tasklist.tl_id}/update`, {
                     tl_id: this.tasklist.tl_id,
@@ -117,6 +127,8 @@ export default {
                     tl_description: this.tasklist.tl_description
                 })
                 .then(response => {
+                    this.loading = false;
+
                     this.$emit("tasklist-updated", response.data.task_list);
 
                     this.closeModal();

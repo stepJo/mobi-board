@@ -1,5 +1,7 @@
 <template>
     <div class="row">
+        <loading :active.sync="loading" color="red" opacity="0.7" blur="3px" />
+
         <modal
             name="delete-tasklist-modal"
             :draggable="false"
@@ -48,13 +50,22 @@
 <script>
 export default {
     props: ["tl_id", "tl_title", "tl_description"],
+    data() {
+        return {
+            loading: false
+        };
+    },
     methods: {
         deleteTaskList() {
+            this.loading = true;
+
             axios
                 .delete(`/api/task_list/${this.tl_id}/destroy`, {
                     data: { tl_id: this.tl_id }
                 })
                 .then(response => {
+                    this.loading = false;
+
                     this.$emit("tasklist-deleted", response.data.task_list);
 
                     this.closeModal();

@@ -1,5 +1,12 @@
 <template>
     <div v-if="selected == task.t_id">
+        <loading
+            :active.sync="loading"
+            color="green"
+            opacity="0.7"
+            blur="3px"
+        />
+
         <ValidationObserver v-slot="{ handleSubmit }">
             <form
                 class="mb-3 w-full bg-white rounded-md shadow"
@@ -85,15 +92,20 @@ export default {
             error: {
                 tl_title: "",
                 tl_description: ""
-            }
+            },
+            loading: false
         };
     },
     mounted() {},
     methods: {
         addTaskList() {
+            this.loading = true;
+
             axios
                 .post("api/task_list/store", this.taskList)
                 .then(response => {
+                    this.loading = false;
+
                     this.$emit("tasklist-added", response.data.task_list);
                 })
                 .catch(error => {

@@ -5,16 +5,19 @@ import VueRouter from "vue-router";
 import router from "./router";
 import { ValidationProvider } from "vee-validate/dist/vee-validate.full.esm";
 import { ValidationObserver } from "vee-validate";
-import loader from "vue-ui-preloader";
+import Loading from "vue-loading-overlay";
+import "vue-loading-overlay/dist/vue-loading.css";
 import Toasted from "vue-toasted";
 import VModal from "vue-js-modal";
 
 window.Vue = require("vue");
 
+//Router
 Vue.use(VueRouter);
 
-Vue.use(loader);
-
+//Loading Overlay
+Vue.component("loading", Loading);
+//Toasted
 Vue.use(Toasted, {
     iconPack: "fontawesome"
 });
@@ -44,13 +47,16 @@ Vue.toasted.register(
     }
 );
 
+//VModal
 Vue.use(VModal);
 
+//Vee Validate
 Vue.component("ValidationProvider", ValidationProvider);
 Vue.component("ValidationObserver", ValidationObserver);
 
 Vue.config.productionTip = false;
 
+//Global Component
 Vue.component("SideBar", require("./components/layout/SideBar").default);
 Vue.component("Navigation", require("./components/layout/Navigation").default);
 Vue.component("Board", require("./components/task/Board").default);

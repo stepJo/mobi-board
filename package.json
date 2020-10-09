@@ -26,6 +26,7 @@
         "vue-js-modal": "^2.0.0-rc.6",
         "vue-loading-overlay": "^3.4.2",
         "vue-router": "^3.4.5",
-        "vue-toasted": "^1.1.28"
+        "vue-toasted": "^1.1.28",
+        "vuedraggable": "^2.24.1"
     }
 }

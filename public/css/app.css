@@ -21234,6 +21234,21 @@ video {
           animation: bounce 1s infinite;
 }
 
+#app {
+  overflow: hidden;
+}
+
+.fade-enter,
+.fade-leave-to {
+  opacity: 0;
+  transform: translateX(10px);
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: all 0.3s ease-in-out;
+}
+
 @media (min-width: 640px) {
   .sm\:container {
     width: 100%;

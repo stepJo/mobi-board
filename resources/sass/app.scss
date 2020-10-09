@@ -3,3 +3,18 @@
 @import "tailwindcss/components";
 
 @import "tailwindcss/utilities"; //
+
+#app {
+    overflow: hidden;
+}
+
+.fade-enter,
+.fade-leave-to {
+    opacity: 0;
+    transform: translateX(10px);
+}
+
+.fade-enter-active,
+.fade-leave-active {
+    transition: all 0.3s ease-in-out;
+}

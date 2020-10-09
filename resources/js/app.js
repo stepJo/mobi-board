@@ -9,14 +9,33 @@ import Loading from "vue-loading-overlay";
 import "vue-loading-overlay/dist/vue-loading.css";
 import Toasted from "vue-toasted";
 import VModal from "vue-js-modal";
+import { VERSION } from "lodash";
 
 window.Vue = require("vue");
 
 //Router
 Vue.use(VueRouter);
 
+//Global Component
+Vue.component("SideBar", require("./components/layout/SideBar").default);
+Vue.component("Navigation", require("./components/layout/Navigation").default);
+Vue.component("Board", require("./components/task/Board").default);
+
+//Global Mixin
+Vue.mixin({
+    methods: {
+        showModal(name) {
+            this.$modal.show(name);
+        },
+        closeModal(name) {
+            this.$modal.hide(name);
+        }
+    }
+});
+
 //Loading Overlay
-Vue.component("loading", Loading);
+Vue.component('loading', Loading)
+
 //Toasted
 Vue.use(Toasted, {
     iconPack: "fontawesome"
@@ -47,20 +66,15 @@ Vue.toasted.register(
     }
 );
 
-//VModal
-Vue.use(VModal);
-
 //Vee Validate
 Vue.component("ValidationProvider", ValidationProvider);
 Vue.component("ValidationObserver", ValidationObserver);
 
+//VModal
+Vue.use(VModal);
+
 Vue.config.productionTip = false;
 
-//Global Component
-Vue.component("SideBar", require("./components/layout/SideBar").default);
-Vue.component("Navigation", require("./components/layout/Navigation").default);
-Vue.component("Board", require("./components/task/Board").default);
-
 const app = new Vue({
-    router: new VueRouter(router)
+    router: new VueRouter(router),
 }).$mount("#app");

@@ -226,6 +226,8 @@ export default {
             this.$toasted.global.successNotification({
                 message: `Tasklist updated to <span class="font-bold ml-1"> ${list.tl_title} </span>`
             });
+
+            this.closeModal("edit-tasklist-modal");
         },
         taskListDeleted(list) {
             let task = this.tasks.find(task => task.t_id === list.t_id);
@@ -235,16 +237,18 @@ export default {
             this.$toasted.global.successNotification({
                 message: `Tasklist <span class="font-bold mx-1"> ${list.tl_title} </span> deleted`
             });
+
+            this.closeModal("delete-tasklist-modal");
         },
         showEditTaskListModal(list) {
             this.setSelectedTaskList(list);
 
-            this.$modal.show("edit-tasklist-modal");
+            this.showModal("edit-tasklist-modal");
         },
         showDeleteTaskListModal(list) {
             this.setSelectedTaskList(list);
 
-            this.$modal.show("delete-tasklist-modal");
+            this.showModal("delete-tasklist-modal");
         }
     }
 };

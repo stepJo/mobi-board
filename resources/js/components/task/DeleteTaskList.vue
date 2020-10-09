@@ -1,6 +1,11 @@
 <template>
     <div class="row">
-        <loading :active.sync="loading" color="red" opacity="0.7" blur="3px" />
+        <loading
+            :active.sync="loading"
+            :opacity="0.7"
+            color="blue"
+            blur="5px"
+        />
 
         <modal
             name="delete-tasklist-modal"
@@ -30,7 +35,7 @@
 
             <div class="w-full p-3 bg-gray-100">
                 <button
-                    @click.prevent="closeModal"
+                    @click.prevent="closeModal('delete-tasklist-modal')"
                     class="px-2 py-2 mr-2 text-white text-xs bg-gray-700 rounded-md shadow hover:bg-gray-900 transition duration-300 ease-in-out"
                 >
                     <i class="fas fa-times" /> Cancel
@@ -67,15 +72,10 @@ export default {
                     this.loading = false;
 
                     this.$emit("tasklist-deleted", response.data.task_list);
-
-                    this.closeModal();
                 })
                 .catch(error => {
                     console.log(error);
                 });
-        },
-        closeModal() {
-            this.$modal.hide("delete-tasklist-modal");
         }
     }
 };

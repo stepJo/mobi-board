@@ -2,9 +2,9 @@
     <div class="row">
         <loading
             :active.sync="loading"
-            color="yellow"
-            opacity="0.7"
-            blur="3px"
+            :opacity="0.7"
+            color="blue"
+            blur="5px"
         />
 
         <modal
@@ -79,7 +79,9 @@
 
                         <div class="w-full p-3 bg-gray-100">
                             <button
-                                @click.prevent="closeModal"
+                                @click.prevent="
+                                    closeModal('edit-tasklist-modal')
+                                "
                                 class="px-2 py-2 mr-2 text-white text-xs bg-red-500 rounded-md shadow hover:bg-red-600 transition duration-300 ease-in-out"
                             >
                                 <i class="fas fa-times" /> Cancel
@@ -130,15 +132,10 @@ export default {
                     this.loading = false;
 
                     this.$emit("tasklist-updated", response.data.task_list);
-
-                    this.closeModal();
                 })
                 .catch(error => {
                     console.log(error);
                 });
-        },
-        closeModal() {
-            this.$modal.hide("edit-tasklist-modal");
         }
     },
     watch: {

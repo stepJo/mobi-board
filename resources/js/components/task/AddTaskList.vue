@@ -2,9 +2,9 @@
     <div v-if="selected == task.t_id">
         <loading
             :active.sync="loading"
-            color="green"
-            opacity="0.7"
-            blur="3px"
+            :opacity="0.7"
+            color="blue"
+            blur="5px"
         />
 
         <ValidationObserver v-slot="{ handleSubmit }">

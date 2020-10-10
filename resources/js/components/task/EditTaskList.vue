@@ -13,7 +13,7 @@
             :resizable="true"
             :adaptive="true"
             :scrollable="true"
-            :height="370"
+            :height="400"
         >
             <div class="flex p-3 bg-orange-300">
                 <h2 class="text-md text-white font-bold">

@@ -5,9 +5,13 @@
                 <div class="page-header">
                     <h1 class="font-bold text-xl">TASK BOARD</h1>
                 </div>
-                <div v-if="tasks.length > 0" class="grid lg:grid-cols-4 gap-5">
+
+                <div
+                    v-if="tasks.length > 0"
+                    class="grid lg:grid-cols-4 md:grid-cols-2 gap-6"
+                >
                     <div v-for="task in tasks" :key="task.t_id">
-                        <div class="py-2">
+                        <div class="py-3">
                             <div class="p-3 bg-blue-500 rounded-md">
                                 <p class="font-bold text-base text-white">
                                     {{ task.t_title }}
@@ -19,16 +23,22 @@
                                 </p>
                             </div>
 
-                            <div class="bg-white pl-0 p-3">
-                                <div v-if="task.lists.length > 0">
-                                    <div class="grid grid-cols-1 gap-4">
+                            <div class="bg-white p-2">
+                                <div class="grid grid-cols-1 gap-4">
+                                    <draggable
+                                        :animation="200"
+                                        :empty-insert-threshold="50"
+                                        :list="task.lists"
+                                        v-bind="taskListDragOptions"
+                                        @end="syncTaskList"
+                                    >
                                         <div
                                             v-for="list in task.lists"
                                             :key="list.tl_id"
-                                            class="py-1 px-3 h-full bg-white rounded-md shadow-xs border-2 border-blue-300 hover:shadow-md cursor-pointer"
+                                            class="p-2 my-2 rounded-md shadow-xs border-2 border-grey-100 hover:shadow cursor-move"
                                         >
                                             <span
-                                                class="py-2 text-md font-bold text-indigo-400"
+                                                class="text-md font-bold text-indigo-400"
                                             >
                                                 {{ list.tl_title }}
                                             </span>
@@ -43,7 +53,7 @@
                                                             list
                                                         )
                                                     "
-                                                    class="fas fa-edit mt-2 text-lg text-orange-300 block"
+                                                    class="fas fa-edit mt-1 text-lg text-orange-300 cursor-pointer block"
                                                 ></i>
 
                                                 <i
@@ -52,41 +62,12 @@
                                                             list
                                                         )
                                                     "
-                                                    class="fas fa-eraser mt-2 ml-2 text-lg text-red-500 block"
+                                                    class="fas fa-eraser mt-1 ml-2 text-lg text-red-500 cursor-pointer block"
                                                 ></i>
                                             </div>
                                         </div>
+                                    </draggable>
 
-                                        <div
-                                            :key="task.t_id"
-                                            v-if="show && selected == task.t_id"
-                                            class="mt-2"
-                                        >
-                                            <add-tasklist
-                                                :selected="selected"
-                                                :task="task"
-                                                v-on:tasklist-added="
-                                                    taskListAdded
-                                                "
-                                                v-on:tasklist-cancelled="
-                                                    cancelSelectTaskToAddList
-                                                "
-                                            />
-                                        </div>
-
-                                        <button
-                                            v-if="selected != task.t_id"
-                                            @click.prevent="
-                                                selectTaskToAddList(task.t_id)
-                                            "
-                                            class="mt-2 text-green-600 hover:underline"
-                                        >
-                                            Add Task List
-                                        </button>
-                                    </div>
-                                </div>
-
-                                <div v-else>
                                     <div
                                         :key="task.t_id"
                                         v-if="show && selected == task.t_id"
@@ -101,28 +82,34 @@
                                         />
                                     </div>
 
-                                    <span
-                                        v-if="!show || selected != task.t_id"
-                                        class="text-gray-600 font-bold"
-                                        >No task at the moment...</span
+                                    <div
+                                        v-if="!task.lists.length"
+                                        class="flex justify-center"
                                     >
-
-                                    <br />
+                                        <span
+                                            v-if="
+                                                !show || selected != task.t_id
+                                            "
+                                            class="text-gray-500 font-bold"
+                                            >Task list empty...</span
+                                        >
+                                    </div>
 
                                     <button
                                         v-if="selected != task.t_id"
                                         @click.prevent="
                                             selectTaskToAddList(task.t_id)
                                         "
-                                        class="mt-2 text-green-600 hover:underline"
+                                        class="mt-1 text-green-600 hover:underline"
                                     >
-                                        Add One
+                                        Add More
                                     </button>
                                 </div>
                             </div>
                         </div>
                     </div>
 
+                    <!-- Edit Tasklist Modal -->
                     <edit-tasklist
                         :tl_id="tasklist.tl_id"
                         :tl_title="tasklist.tl_title"
@@ -130,6 +117,7 @@
                         v-on:tasklist-updated="taskListUpdated"
                     />
 
+                    <!-- Delete Tasklist Modal -->
                     <delete-tasklist
                         :tl_id="tasklist.tl_id"
                         :tl_title="tasklist.tl_title"
@@ -140,7 +128,7 @@
 
                 <div v-else class="row">
                     <div class="grid lg:grid-cols-1 ml-5 gap-3">
-                        <h1>No tasks available...</h1>
+                        <h1>No tasks at the moment...</h1>
                     </div>
                 </div>
             </div>
@@ -149,12 +137,14 @@
 </template>
 
 <script>
+import draggable from "vuedraggable";
 import AddTaskList from "./AddTaskList.vue";
 import EditTaskList from "./EditTaskList.vue";
 import DeleteTaskList from "./DeleteTaskList.vue";
 
 export default {
     components: {
+        draggable,
         "add-tasklist": AddTaskList,
         "edit-tasklist": EditTaskList,
         "delete-tasklist": DeleteTaskList
@@ -201,6 +191,18 @@ export default {
         cancelSelectTaskToAddList() {
             this.show = true;
             this.selected = "";
+        },
+        syncTaskList() {
+            axios
+                .patch("/api/task/sync", {
+                    tasks: this.tasks
+                })
+                .then(response => {
+                    console.log(response.data);
+                })
+                .catch(error => {
+                    console.log(error);
+                });
         },
         taskListAdded(list) {
             let task = this.tasks.find(task => task.t_id === list.t_id);
@@ -249,6 +251,14 @@ export default {
             this.setSelectedTaskList(list);
 
             this.showModal("delete-tasklist-modal");
+        }
+    },
+    computed: {
+        taskListDragOptions() {
+            return {
+                animation: 200,
+                group: "task"
+            };
         }
     }
 };

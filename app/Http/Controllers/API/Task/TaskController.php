@@ -88,4 +88,35 @@ class TaskController extends Controller
     public function destroy(Request $request)
     {
     }
+
+    public function sync(Request $request) {
+        foreach($request->tasks as $task)
+        {
+            foreach($task['lists'] as $i => $list)
+            {
+                $order  = $i + 1;
+
+                try 
+                {
+                    $task_list =TaskList::find($list['tl_id']);
+
+                    $task_list->update([
+                        't_id'     => $task['t_id'],
+                        'tl_order' => $order
+                    ]);
+                }
+                catch(Exception $e)
+                {
+                    return response()->json([
+                        'errors' => $e->getMessage(),
+                        'status' => 200
+                    ]);
+                }
+            }
+        }
+
+        return response()->json([
+            'status'    => 200
+        ]);
+    }
 }

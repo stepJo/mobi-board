@@ -21235,7 +21235,7 @@ video {
 }
 
 #app {
-  overflow: hidden;
+  overflow-x: hidden;
 }
 
 .fade-enter,

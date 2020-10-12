@@ -26,10 +26,8 @@
                             <div class="bg-white p-2">
                                 <div class="grid grid-cols-1 gap-4">
                                     <draggable
-                                        :animation="200"
-                                        :empty-insert-threshold="50"
-                                        :list="task.lists"
                                         v-bind="taskListDragOptions"
+                                        :list="task.lists"
                                         @end="syncTaskList"
                                     >
                                         <div
@@ -37,34 +35,16 @@
                                             :key="list.tl_id"
                                             class="p-2 my-2 rounded-md shadow-xs border-2 border-grey-100 hover:shadow cursor-move"
                                         >
-                                            <span
-                                                class="text-md font-bold text-indigo-400"
-                                            >
-                                                {{ list.tl_title }}
-                                            </span>
-                                            <p class="text-xs text-gray-500">
-                                                {{ list.tl_description }}
-                                            </p>
-
-                                            <div class="flex justify-end">
-                                                <i
-                                                    @click.prevent="
-                                                        showEditTaskListModal(
-                                                            list
-                                                        )
-                                                    "
-                                                    class="fas fa-edit mt-1 text-lg text-orange-300 cursor-pointer block"
-                                                ></i>
-
-                                                <i
-                                                    @click.prevent="
-                                                        showDeleteTaskListModal(
-                                                            list
-                                                        )
-                                                    "
-                                                    class="fas fa-eraser mt-1 ml-2 text-lg text-red-500 cursor-pointer block"
-                                                ></i>
-                                            </div>
+                                            <!-- TaskList -->
+                                            <tasklist
+                                                :list="list"
+                                                v-on:show-edit-modal="
+                                                    setSelectedTaskList
+                                                "
+                                                v-on:show-delete-modal="
+                                                    setSelectedTaskList
+                                                "
+                                            />
                                         </div>
                                     </draggable>
 
@@ -72,6 +52,7 @@
                                         :key="task.t_id"
                                         v-if="show && selected == task.t_id"
                                     >
+                                        <!-- Add TaskList -->
                                         <add-tasklist
                                             :selected="selected"
                                             :task="task"
@@ -138,6 +119,7 @@
 
 <script>
 import draggable from "vuedraggable";
+import TaskList from "./TaskList.vue";
 import AddTaskList from "./AddTaskList.vue";
 import EditTaskList from "./EditTaskList.vue";
 import DeleteTaskList from "./DeleteTaskList.vue";
@@ -145,6 +127,7 @@ import DeleteTaskList from "./DeleteTaskList.vue";
 export default {
     components: {
         draggable,
+        tasklist: TaskList,
         "add-tasklist": AddTaskList,
         "edit-tasklist": EditTaskList,
         "delete-tasklist": DeleteTaskList
@@ -198,7 +181,9 @@ export default {
                     tasks: this.tasks
                 })
                 .then(response => {
-                    console.log(response.data);
+                    this.$toasted.global.successNotification({
+                        message: "Tasklist synchronized"
+                    });
                 })
                 .catch(error => {
                     console.log(error);
@@ -241,22 +226,13 @@ export default {
             });
 
             this.closeModal("delete-tasklist-modal");
-        },
-        showEditTaskListModal(list) {
-            this.setSelectedTaskList(list);
-
-            this.showModal("edit-tasklist-modal");
-        },
-        showDeleteTaskListModal(list) {
-            this.setSelectedTaskList(list);
-
-            this.showModal("delete-tasklist-modal");
         }
     },
     computed: {
         taskListDragOptions() {
             return {
                 animation: 200,
+                emptyInsertThreshold: 60,
                 group: "task"
             };
         }

@@ -31,9 +31,6 @@
         <link rel="stylesheet" href="{{  asset('app_assets/css/bootstrap.min.css') }}">
         <link rel="stylesheet" href="{{  asset('app_assets/css/azzara.min.css') }}">
 
-        <!-- CSS Just for demo purpose, don't include it in your project -->
-        <link rel="stylesheet" href="{{  asset('app_assets/css/demo.css') }}">
-
         <!-- App CSS -->
         <link rel="stylesheet" href="{{  asset('css/app.css') }}">
 

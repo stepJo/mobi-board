@@ -11,7 +11,7 @@
         
         <meta content='width=device-width, initial-scale=1.0, shrink-to-fit=no' name='viewport' />
         
-        <link rel="icon" href="../assets/img/icon.ico" type="image/x-icon"/>
+        <link rel="icon" href="{{ asset('app_assets/img/icon.ico') }}" type="image/x-icon"/>
 
         <!-- Fonts and icons -->
         <script src="../assets/js/plugin/webfont/webfont.min.js"></script>
@@ -27,8 +27,8 @@
         </script>
         
         <!-- CSS Files -->
-        <link rel="stylesheet" href="../assets/css/bootstrap.min.css">
-        <link rel="stylesheet" href="../assets/css/azzara.min.css">
+        <link rel="stylesheet" href="{{  asset('app_assets/css/bootstrap.min.css') }}">
+        <link rel="stylesheet" href="{{  asset('app_assets/css/azzara.min.css') }}">
     
     </head>
 

@@ -1,5 +1,12 @@
 <template>
     <div>
+        <button
+            @click.prevent="showModal('add-task-modal')"
+            class="font-semibold rounded-full px-3 py-2 bg-green-400 text-white shadow transition duration-300 ease-in-out hover:bg-green-500"
+        >
+            Add More Task
+        </button>
+
         <loading
             :active.sync="loading"
             :opacity="0.7"
@@ -8,23 +15,23 @@
         />
 
         <modal
-            name="edit-tasklist-modal"
+            name="add-task-modal"
             :draggable="false"
             :resizable="true"
             :adaptive="true"
             :scrollable="true"
             :height="400"
         >
-            <div class="flex p-3 bg-orange-300">
+            <div class="flex p-3 bg-green-300">
                 <h2 class="text-md text-white font-bold">
-                    Edit Task List
+                    Add Task
                 </h2>
             </div>
             <div class="p-3">
                 <ValidationObserver v-slot="{ handleSubmit }">
                     <form
                         class="w-full bg-white rounded-md shadow"
-                        @submit.prevent="handleSubmit(update)"
+                        @submit.prevent="handleSubmit(create)"
                     >
                         <div class="p-3">
                             <label class="block uppercase font-bold"
@@ -48,10 +55,10 @@
                                 </span>
 
                                 <input
-                                    v-model.trim="tasklist.tl_title"
+                                    v-model.trim="t_title"
                                     class="w-full mt-1 p-2 border-2 border-gray-300 rounded-md"
                                     type="text"
-                                    name="tl_title"
+                                    name="t_title"
                                     placeholder="Title"
                                 />
                             </ValidationProvider>
@@ -78,10 +85,10 @@
                                 </span>
 
                                 <textarea
-                                    v-model="tasklist.tl_description"
+                                    v-model="t_description"
                                     class="w-full mt-1 p-2 border-2 border-gray-300 rounded-md"
                                     rows="3"
-                                    name="tl_description"
+                                    name="t_description"
                                     placeholder="Description"
                                 ></textarea>
                             </ValidationProvider>
@@ -89,9 +96,7 @@
 
                         <div class="w-full p-3 bg-gray-100">
                             <button
-                                @click.prevent="
-                                    closeModal('edit-tasklist-modal')
-                                "
+                                @click.prevent="closeModal('add-task-modal')"
                                 class="px-2 py-2 mr-2 text-white text-xs bg-red-500 rounded-md shadow hover:bg-red-600 transition duration-300 ease-in-out"
                             >
                                 <i class="fas fa-times" /> Cancel
@@ -99,9 +104,9 @@
 
                             <button
                                 type="submit"
-                                class="px-3 py-2 text-white text-xs bg-orange-300 rounded shadow hover:bg-orange-500 transition duration-300 ease-in-out"
+                                class="px-3 py-2 text-white text-xs bg-green-300 rounded shadow hover:bg-green-500 transition duration-300 ease-in-out"
                             >
-                                <i class="fas fa-edit" /> Update
+                                <i class="fas fa-add" /> Add
                             </button>
                         </div>
                     </form>
@@ -113,46 +118,30 @@
 
 <script>
 export default {
-    props: ["tl_id", "tl_title", "tl_description"],
     data() {
         return {
-            tasklist: {
-                tl_id: "",
-                tl_title: "",
-                tl_description: ""
-            },
+            t_title: "",
+            t_description: "",
             loading: false
         };
     },
     methods: {
-        update() {
+        create() {
             this.loading = true;
 
             axios
-                .patch(`/api/task_list/${this.tasklist.tl_id}/update`, {
-                    tl_id: this.tasklist.tl_id,
-                    tl_title: this.tasklist.tl_title,
-                    tl_description: this.tasklist.tl_description
+                .post("/api/task/store", {
+                    t_title: this.t_title,
+                    t_description: this.t_description
                 })
                 .then(response => {
                     this.loading = false;
 
-                    this.$emit("tasklist-updated", response.data.task_list);
+                    this.$emit("task-created", response.data.task);
                 })
                 .catch(error => {
                     console.log(error);
                 });
-        }
-    },
-    watch: {
-        tl_id() {
-            this.tasklist.tl_id = this.tl_id;
-        },
-        tl_title() {
-            this.tasklist.tl_title = this.tl_title;
-        },
-        tl_description() {
-            this.tasklist.tl_description = this.tl_description;
         }
     }
 };

@@ -1,9 +1,9 @@
 <template>
     <div>
-        <span class="text-md font-bold text-indigo-400">
+        <p class="text-md font-bold text-indigo-400 leading-7">
             {{ list.tl_title }}
-        </span>
-        <p class="text-xs text-gray-500">
+        </p>
+        <p class="leading-4 text-xs text-gray-500">
             {{ list.tl_description }}
         </p>
 

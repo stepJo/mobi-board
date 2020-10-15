@@ -2,26 +2,25 @@
     <div class="main-panel">
         <div class="content">
             <div class="page-inner">
-                <div class="page-header">
+                <div class="page-header my-3">
                     <h1 class="font-bold text-xl">TASK BOARD</h1>
                 </div>
 
+                <!-- Add Task -->
+                <add-task v-on:task-created="taskCreated" />
+
                 <div
                     v-if="tasks.length > 0"
-                    class="grid lg:grid-cols-4 md:grid-cols-2 gap-6"
+                    class="grid xl:grid-cols-4 md:grid-cols-2 gap-6"
                 >
                     <div v-for="task in tasks" :key="task.t_id">
                         <div class="py-3">
-                            <div class="p-3 bg-blue-500 rounded-md">
-                                <p class="font-bold text-base text-white">
-                                    {{ task.t_title }}
-                                </p>
-                                <p
-                                    class="badge bg-indigo-600 border-none text-white mt-2"
-                                >
-                                    {{ task.t_description }}
-                                </p>
-                            </div>
+                            <!-- Task -->
+                            <task
+                                :task="task"
+                                v-on:show-edit-modal="setSelectedTask"
+                                v-on:show-delete-modal="setSelectedTask"
+                            />
 
                             <div class="bg-white p-2">
                                 <div class="grid grid-cols-1 gap-4">
@@ -50,15 +49,17 @@
 
                                     <div
                                         :key="task.t_id"
-                                        v-if="show && selected == task.t_id"
+                                        v-show="show && selected == task.t_id"
                                     >
                                         <!-- Add TaskList -->
                                         <add-tasklist
                                             :selected="selected"
                                             :task="task"
-                                            v-on:tasklist-added="taskListAdded"
+                                            v-on:tasklist-created="
+                                                taskListCreated
+                                            "
                                             v-on:tasklist-cancelled="
-                                                cancelSelectTaskToAddList
+                                                cancelSelectTask
                                             "
                                         />
                                     </div>
@@ -77,10 +78,8 @@
                                     </div>
 
                                     <button
-                                        v-if="selected != task.t_id"
-                                        @click.prevent="
-                                            selectTaskToAddList(task.t_id)
-                                        "
+                                        v-show="selected != task.t_id"
+                                        @click.prevent="selectTask(task.t_id)"
                                         class="mt-1 text-green-600 hover:underline"
                                     >
                                         Add More
@@ -90,27 +89,41 @@
                         </div>
                     </div>
 
+                    <!-- Delete Task Modal -->
+                    <delete-task
+                        :t_id="modified.id"
+                        :t_title="modified.title"
+                        :t_description="modified.description"
+                        v-on:task-deleted="taskDeleted"
+                    />
+
+                    <!-- Edit Task Modal -->
+                    <edit-task
+                        :t_id="modified.id"
+                        :t_title="modified.title"
+                        :t_description="modified.description"
+                        v-on:task-updated="taskUpdated"
+                    />
+
                     <!-- Edit Tasklist Modal -->
                     <edit-tasklist
-                        :tl_id="tasklist.tl_id"
-                        :tl_title="tasklist.tl_title"
-                        :tl_description="tasklist.tl_description"
+                        :tl_id="modified.id"
+                        :tl_title="modified.title"
+                        :tl_description="modified.description"
                         v-on:tasklist-updated="taskListUpdated"
                     />
 
                     <!-- Delete Tasklist Modal -->
                     <delete-tasklist
-                        :tl_id="tasklist.tl_id"
-                        :tl_title="tasklist.tl_title"
-                        :tl_description="tasklist.tl_description"
+                        :tl_id="modified.id"
+                        :tl_title="modified.title"
+                        :tl_description="modified.description"
                         v-on:tasklist-deleted="taskListDeleted"
                     />
                 </div>
 
-                <div v-else class="row">
-                    <div class="grid lg:grid-cols-1 ml-5 gap-3">
-                        <h1>No tasks at the moment...</h1>
-                    </div>
+                <div v-else class="flex my-3">
+                    <h1>No tasks at the moment...</h1>
                 </div>
             </div>
         </div>
@@ -119,6 +132,10 @@
 
 <script>
 import draggable from "vuedraggable";
+import Task from "./Task.vue";
+import AddTask from "./AddTask.vue";
+import EditTask from "./EditTask.vue";
+import DeleteTask from "./DeleteTask.vue";
 import TaskList from "./TaskList.vue";
 import AddTaskList from "./AddTaskList.vue";
 import EditTaskList from "./EditTaskList.vue";
@@ -127,6 +144,10 @@ import DeleteTaskList from "./DeleteTaskList.vue";
 export default {
     components: {
         draggable,
+        task: Task,
+        "add-task": AddTask,
+        "edit-task": EditTask,
+        "delete-task": DeleteTask,
         tasklist: TaskList,
         "add-tasklist": AddTaskList,
         "edit-tasklist": EditTaskList,
@@ -137,15 +158,19 @@ export default {
             tasks: [],
             show: true,
             selected: "",
-            tasklist: {
-                tl_id: "",
-                tl_title: "",
-                tl_description: ""
+            open: false,
+            openedId: "",
+            modified: {
+                id: "",
+                title: "",
+                description: ""
             }
         };
     },
     created() {
-        this.getTasks();
+        setTimeout(() => {
+            this.getTasks();
+        }, 200);
     },
     methods: {
         getTasks() {
@@ -158,7 +183,7 @@ export default {
                     console.log(error);
                 });
         },
-        selectTaskToAddList(id) {
+        selectTask(id) {
             if (this.selected != id) {
                 this.selected = id;
             } else {
@@ -166,14 +191,55 @@ export default {
                 this.selected = id;
             }
         },
-        setSelectedTaskList(list) {
-            this.tasklist.tl_id = list.tl_id;
-            this.tasklist.tl_title = list.tl_title;
-            this.tasklist.tl_description = list.tl_description;
+        setSelectedTask(task) {
+            this.modified.id = task.t_id;
+            this.modified.title = task.t_title;
+            this.modified.description = task.t_description;
         },
-        cancelSelectTaskToAddList() {
-            this.show = true;
+        cancelSelectTask() {
             this.selected = "";
+        },
+        taskCreated(task) {
+            this.tasks.push({
+                t_id: task.t_id,
+                t_title: task.t_title,
+                t_description: task.t_description,
+                lists: []
+            });
+
+            this.$toasted.global.successNotification({
+                message: "Task created"
+            });
+
+            this.closeModal("add-task-modal");
+        },
+        taskUpdated(task) {
+            let index = this.tasks.map(t => t.t_id).indexOf(task.t_id);
+
+            this.tasks[index].t_title = task.t_title;
+            this.tasks[index].t_description = task.t_description;
+
+            this.$toasted.global.successNotification({
+                message: `Task updated to <span class="font-bold ml-1"> ${task.t_title} </span>`
+            });
+
+            this.closeModal("edit-task-modal");
+        },
+        taskDeleted(task) {
+            let index = this.tasks.map(t => t.t_id).indexOf(task.t_id);
+
+            this.tasks.splice(index, 1);
+
+            this.$toasted.global.successNotification({
+                message: `Task <span class="font-bold mx-1"> ${task.t_title} </span> deleted`
+            });
+
+            this.closeModal("delete-task-modal");
+        },
+        setSelectedTaskList(list) {
+            this.modified.id = list.tl_id;
+            this.modified.title = list.tl_title;
+            this.modified.description = list.tl_description;
         },
         syncTaskList() {
             axios
@@ -189,7 +255,7 @@ export default {
                     console.log(error);
                 });
         },
-        taskListAdded(list) {
+        taskListCreated(list) {
             let task = this.tasks.find(task => task.t_id === list.t_id);
 
             task.lists.push({
@@ -201,7 +267,7 @@ export default {
             this.selected = "";
 
             this.$toasted.global.successNotification({
-                message: "Tasklist added"
+                message: "Tasklist created"
             });
         },
         taskListUpdated(list) {

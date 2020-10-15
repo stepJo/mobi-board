@@ -39,14 +39,14 @@ class TaskListController extends Controller
             return response()->json([
                 'task_list' => $task_list,
                 'status'    => 200
-            ]);
+            ], 200);
         }
         catch(Exception $e)
         {
             return response()->json([
                 'error' => $e->getMessage(),
-                'status' => 200
-            ]);
+                'status' => 400
+            ], 400);
         }
     }
 
@@ -58,14 +58,14 @@ class TaskListController extends Controller
             return response()->json([
                 'task_list' => $task_list,
                 'status'    => 200
-            ]);
+            ], 200);
         }   
         catch(Exception $e)
         {
             return response()->json([
                 'error' => $e->getMessage(),
-                'status' => 200
-            ]);
+                'status' => 400
+            ], 400);
         }
     }
 
@@ -90,14 +90,14 @@ class TaskListController extends Controller
             return response()->json([
                 'task_list' => $task_list,
                 'status'    => 200
-            ]);
+            ], 200);
         }
         catch(Exception $e)
         {
             return response()->json([
                 'error' => $e->getMessage(),
-                'status' => 200
-            ]);
+                'status' => 400
+            ], 400);
         }
     }
 
@@ -118,14 +118,14 @@ class TaskListController extends Controller
             return response()->json([
                 'task_list' => $task_list,
                 'status'    => 200
-            ]);
+            ], 200);
         }
         catch(Exception $e)
         {
             return response()->json([
                 'error' => $e->getMessage(),
-                'status' => 200
-            ]);
+                'status' => 400
+            ], 400);
         }
 
     }

@@ -4,7 +4,8 @@ namespace App\Http\Controllers\API\Task;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Http\Requests\Task\CreateTaskListRequest;
+use App\Http\Requests\Task\CreateTaskRequest;
+use App\Http\Requests\Task\UpdateTaskRequest;
 use App\Models\Task;
 use App\Models\TaskList;
 
@@ -15,7 +16,7 @@ class TaskController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
         try
         {
@@ -41,8 +42,28 @@ class TaskController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store()
+    public function store(CreateTaskRequest $request)
     {
+        try
+        {
+            $task = Task::create([
+                'u_id'          => auth()->user()->u_id,
+                't_title'       => $request->t_title,
+                't_description' => $request->t_description
+            ]);
+
+            return response()->json([
+                'task'   => $task,
+                'status' => 200
+            ], 200);
+        }
+        catch(Exception $e)
+        {
+            return response()->json([
+                'error' => $e->getMessage(),
+                'status' => 400
+            ], 400);
+        }
     }
 
     /**
@@ -74,9 +95,29 @@ class TaskController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(UpdateTaskRequest $request, $id)
     {
-        //
+        try
+        {
+            $task = Task::find($request->t_id);
+
+            $task->update([
+                't_title'       => $request->t_title,
+                't_description' => $request->t_description
+            ]);
+
+            return response()->json([
+                'task'   => $task,
+                'status' => 200
+            ], 200);
+        }
+        catch(Exception $e)
+        {
+            return response()->json([
+                'error' => $e->getMessage(),
+                'status' => 400
+            ], 400);
+        }
     }
 
     /**
@@ -87,6 +128,23 @@ class TaskController extends Controller
      */
     public function destroy(Request $request)
     {
+        try{
+            $task = Task::find($request->t_id);
+
+            $task->delete();
+
+            return response()->json([
+                'task' => $task,
+                'status' => 200
+            ]);
+        }
+        catch(Exception $e)
+        {
+            return response()->json([
+                'errors' => $e->getMessage(),
+                'status' => 400
+            ], 400);
+        }
     }
 
     public function sync(Request $request) {
@@ -109,14 +167,14 @@ class TaskController extends Controller
                 {
                     return response()->json([
                         'errors' => $e->getMessage(),
-                        'status' => 200
-                    ]);
+                        'status' => 400
+                    ], 400);
                 }
             }
         }
 
         return response()->json([
             'status'    => 200
-        ]);
+        ], 200);
     }
 }

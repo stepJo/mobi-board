@@ -8,7 +8,7 @@
         />
 
         <modal
-            name="edit-tasklist-modal"
+            name="edit-task-modal"
             :draggable="false"
             :resizable="true"
             :adaptive="true"
@@ -17,7 +17,7 @@
         >
             <div class="flex p-3 bg-orange-300">
                 <h2 class="text-md text-white font-bold">
-                    Edit Task List
+                    Edit Task
                 </h2>
             </div>
             <div class="p-3">
@@ -48,10 +48,10 @@
                                 </span>
 
                                 <input
-                                    v-model.trim="tasklist.tl_title"
+                                    v-model.trim="task.t_title"
                                     class="w-full mt-1 p-2 border-2 border-gray-300 rounded-md"
                                     type="text"
-                                    name="tl_title"
+                                    name="t_title"
                                     placeholder="Title"
                                 />
                             </ValidationProvider>
@@ -78,10 +78,10 @@
                                 </span>
 
                                 <textarea
-                                    v-model="tasklist.tl_description"
+                                    v-model="task.t_description"
                                     class="w-full mt-1 p-2 border-2 border-gray-300 rounded-md"
                                     rows="3"
-                                    name="tl_description"
+                                    name="t_description"
                                     placeholder="Description"
                                 ></textarea>
                             </ValidationProvider>
@@ -89,9 +89,7 @@
 
                         <div class="w-full p-3 bg-gray-100">
                             <button
-                                @click.prevent="
-                                    closeModal('edit-tasklist-modal')
-                                "
+                                @click.prevent="closeModal('edit-task-modal')"
                                 class="px-2 py-2 mr-2 text-white text-xs bg-red-500 rounded-md shadow hover:bg-red-600 transition duration-300 ease-in-out"
                             >
                                 <i class="fas fa-times" /> Cancel
@@ -113,15 +111,15 @@
 
 <script>
 export default {
-    props: ["tl_id", "tl_title", "tl_description"],
+    props: ["t_id", "t_title", "t_description"],
     data() {
         return {
-            tasklist: {
-                tl_id: "",
-                tl_title: "",
-                tl_description: ""
-            },
-            loading: false
+            task: {
+                t_id: "",
+                t_title: "",
+                t_description: "",
+                loading: false
+            }
         };
     },
     methods: {
@@ -129,15 +127,15 @@ export default {
             this.loading = true;
 
             axios
-                .patch(`/api/task_list/${this.tasklist.tl_id}/update`, {
-                    tl_id: this.tasklist.tl_id,
-                    tl_title: this.tasklist.tl_title,
-                    tl_description: this.tasklist.tl_description
+                .patch(`/api/task/${this.task.t_id}/update`, {
+                    t_id: this.task.t_id,
+                    t_title: this.task.t_title,
+                    t_description: this.task.t_description
                 })
                 .then(response => {
                     this.loading = false;
 
-                    this.$emit("tasklist-updated", response.data.task_list);
+                    this.$emit("task-updated", response.data.task);
                 })
                 .catch(error => {
                     console.log(error);
@@ -145,14 +143,14 @@ export default {
         }
     },
     watch: {
-        tl_id() {
-            this.tasklist.tl_id = this.tl_id;
+        t_id() {
+            this.task.t_id = this.t_id;
         },
-        tl_title() {
-            this.tasklist.tl_title = this.tl_title;
+        t_title() {
+            this.task.t_title = this.t_title;
         },
-        tl_description() {
-            this.tasklist.tl_description = this.tl_description;
+        t_description() {
+            this.task.t_description = this.t_description;
         }
     }
 };

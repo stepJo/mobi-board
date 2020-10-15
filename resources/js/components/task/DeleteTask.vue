@@ -8,7 +8,7 @@
         />
 
         <modal
-            name="delete-tasklist-modal"
+            name="delete-task-modal"
             :draggable="false"
             :resizable="true"
             :adaptive="true"
@@ -17,25 +17,23 @@
         >
             <div class="flex p-3 bg-red-500">
                 <h2 class="text-md text-white font-bold">
-                    Delete Task List
+                    Delete Task
                 </h2>
             </div>
             <div class="p-3 flex flex-col align-content-between">
                 <p class="my-2">
                     Title : <br />
-                    <span class="text-indigo-400 font-bold">{{
-                        tl_title
-                    }}</span>
+                    <span class="text-indigo-400 font-bold">{{ t_title }}</span>
                 </p>
                 <p class="my-2">
                     Description : <br />
-                    <span class="text-gray-500">{{ tl_description }}</span>
+                    <span class="text-gray-500">{{ t_description }}</span>
                 </p>
             </div>
 
             <div class="w-full p-3 bg-gray-100">
                 <button
-                    @click.prevent="closeModal('delete-tasklist-modal')"
+                    @click.prevent="closeModal('delete-task-modal')"
                     class="px-2 py-2 mr-2 text-white text-xs bg-gray-700 rounded-md shadow hover:bg-gray-900 transition duration-300 ease-in-out"
                 >
                     <i class="fas fa-times" /> Cancel
@@ -54,7 +52,7 @@
 
 <script>
 export default {
-    props: ["tl_id", "tl_title", "tl_description"],
+    props: ["t_id", "t_title", "t_description"],
     data() {
         return {
             loading: false
@@ -65,13 +63,13 @@ export default {
             this.loading = true;
 
             axios
-                .delete(`/api/task_list/${this.tl_id}/destroy`, {
-                    data: { tl_id: this.tl_id }
+                .delete(`/api/task/${this.t_id}/destroy`, {
+                    data: { t_id: this.t_id }
                 })
                 .then(response => {
                     this.loading = false;
 
-                    this.$emit("tasklist-deleted", response.data.task_list);
+                    this.$emit("task-deleted", response.data.task);
                 })
                 .catch(error => {
                     console.log(error);

@@ -10,7 +10,7 @@
         <ValidationObserver v-slot="{ handleSubmit }">
             <form
                 class="mb-3 w-full bg-white rounded-md shadow"
-                @submit.prevent="handleSubmit(addTaskList)"
+                @submit.prevent="handleSubmit(create)"
             >
                 <div class="p-1">
                     <div class="p-2">
@@ -19,9 +19,16 @@
                         <ValidationProvider
                             name="Title"
                             rules="required"
+                            mode="eager"
                             v-slot="{ errors }"
+                            :customMessages="{
+                                required: 'Title is required'
+                            }"
                         >
-                            <span class="mt-1 text-xs text-red-600 font-bold">
+                            <span
+                                v-if="errors[0]"
+                                class="mt-1 text-xs text-red-600 font-bold"
+                            >
                                 {{ errors[0] }}
                             </span>
 
@@ -42,14 +49,21 @@
                         <ValidationProvider
                             name="Description"
                             rules="required"
+                            mode="eager"
+                            :customMessages="{
+                                required: 'Description is required'
+                            }"
                             v-slot="{ errors }"
                         >
-                            <span class="mt-1 text-xs text-red-600 font-bold">
+                            <span
+                                v-if="errors[0]"
+                                class="mt-1 text-xs text-red-600 font-bold"
+                            >
                                 {{ errors[0] }}
                             </span>
 
                             <textarea
-                                v-model.trim="taskList.tl_description"
+                                v-model="taskList.tl_description"
                                 class="w-full mt-1 p-2 border-2 border-gray-300 rounded-md"
                                 rows="3"
                                 name="tl_description"
@@ -98,7 +112,7 @@ export default {
     },
     mounted() {},
     methods: {
-        addTaskList() {
+        create() {
             this.loading = true;
 
             axios
@@ -106,7 +120,7 @@ export default {
                 .then(response => {
                     this.loading = false;
 
-                    this.$emit("tasklist-added", response.data.task_list);
+                    this.$emit("tasklist-created", response.data.task_list);
                 })
                 .catch(error => {
                     console.log(error);

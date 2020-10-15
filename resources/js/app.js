@@ -9,7 +9,6 @@ import Loading from "vue-loading-overlay";
 import "vue-loading-overlay/dist/vue-loading.css";
 import Toasted from "vue-toasted";
 import VModal from "vue-js-modal";
-import { VERSION } from "lodash";
 
 window.Vue = require("vue");
 
@@ -17,9 +16,10 @@ window.Vue = require("vue");
 Vue.use(VueRouter);
 
 //Global Component
-Vue.component("SideBar", require("./components/layout/SideBar").default);
-Vue.component("Navigation", require("./components/layout/Navigation").default);
-Vue.component("Board", require("./components/task/Board").default);
+Vue.component("login-form", require("./components/auth/LoginForm").default);
+Vue.component("side-bar", require("./components/layout/SideBar").default);
+Vue.component("navigation", require("./components/layout/Navigation").default);
+Vue.component("board", require("./components/task/Board").default);
 
 //Global Mixin
 Vue.mixin({
@@ -65,6 +65,31 @@ Vue.toasted.register(
         }
     }
 );
+Vue.toasted.register(
+    "failNotification",
+    payload => {
+        if (!payload.message) {
+            return "Fail";
+        }
+        return payload.message;
+    },
+    {
+        icon: {
+            name: "fa-times"
+        },
+        after: true,
+        keepOnHover: true,
+        duration: 2000,
+        position: "top-right",
+        type: "error",
+        action: {
+            text: "CLOSE",
+            onClick: (e, toastObject) => {
+                toastObject.goAway(0);
+            }
+        }
+    }
+)
 
 //Vee Validate
 Vue.component("ValidationProvider", ValidationProvider);

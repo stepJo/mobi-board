@@ -45,6 +45,7 @@
         <script src="{{ asset('app_assets/js/core/popper.min.js') }}"></script>
         <script src="{{ asset('app_assets/js/core/bootstrap.min.js') }}"></script>
 
+
         <!-- jQuery UI -->
         <script src="{{ asset('app_assets/js/plugin/jquery-ui-1.12.1.custom/jquery-ui.min.js') }}"></script>
         <script src="{{ asset('app_assets/js/plugin/jquery-ui-touch-punch/jquery.ui.touch-punch.min.js') }}"></script>
